@@ -18,12 +18,13 @@ import Auth from '../utils/auth';
 const SavedBooks = () => {
 //apply useQuery and useMutation to take in imported mutations
   const { loading, data } = useQuery(QUERY_ME);
+  console.log (data);
 //grab REMOVE_BOOK and store in const removeBook
   const [removeBook] = useMutation(REMOVE_BOOK);
 //grab "me" query
   const userData = data?.me || {};
 
-  const handleDeleteBook = async (bookId) => {
+  const handleRemoveBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -78,7 +79,7 @@ const SavedBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   <Button
                     className="btn-block btn-danger"
-                    onClick={() => handleDeleteBook(book.bookId)}
+                    onClick={() => handleRemoveBook(book.bookId)}
                   >
                     Delete this Book!
                   </Button>
