@@ -20,42 +20,60 @@ const resolvers = {
       return { token, User };
     },
     login: async (parent, { email, password }) => {
-      const User = await User.findOne({ email });
-
-      if (!User) {
+      const user = await User.findOne({ email });
+      console.log (user);
+      if (!user) {
         throw new AuthenticationError('No User with this email found!');
       }
 
-      const correctPw = await User.isCorrectPassword(password);
+      const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Incorrect password!');
       }
 
-      const token = signToken(User);
+      const token = signToken(user);
       console.log(token);
-      return { token, User };
+      return { token, user };
     },
 
-    saveBook: async (parent, { UserId, book }) => {
-      return User.findOneAndUpdate(
-        { _id: UserId },
-        {
-          $addToSet: { books: book },
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+    saveBook: async (parent, args, context) => {
+      console.log (context.user, "saved book mutation")
+      if (context.user){
+        const updateUser = User.findOneAndUpdate(
+          { _id: context.user._id },
+          {
+            $push: { savedBooks: args.book },
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+        return updateUser;
+      }
+      
     },
+
+    // saveBook: async (parent, { UserId, book }) => {
+    //   return User.findOneAndUpdate(
+    //     { _id: UserId },
+    //     {
+    //       $addToSet: { books: book },
+    //     },
+    //     {
+    //       new: true,
+    //       runValidators: true,
+    //     }
+    //   );
+    // },
     removeUser: async (parent, { UserId }) => {
       return User.findOneAndDelete({ _id: UserId });
     },
     deleteBook: async (parent, { UserId, book }) => {
       return User.findOneAndUpdate(
         { _id: UserId },
-        { $pull: { books: book } },
+        { $pull: { savedBooks: book } },
         { new: true }
       );
     },
@@ -63,3 +81,6 @@ const resolvers = {
 };
 
 module.exports = resolvers;
+
+
+
