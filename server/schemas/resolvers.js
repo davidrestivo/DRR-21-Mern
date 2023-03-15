@@ -4,7 +4,7 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    me: async (parent, args, context ) => {
+    me: async (parent, args, context) => {
       if (context.user) {
         return User.findOne({ _id: context.user._id });
       }
@@ -21,7 +21,7 @@ const resolvers = {
     },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
-      console.log (user);
+      console.log(user);
       if (!user) {
         throw new AuthenticationError('No User with this email found!');
       }
@@ -38,8 +38,8 @@ const resolvers = {
     },
 
     saveBook: async (parent, args, context) => {
-      console.log (context.user, "saved book mutation")
-      if (context.user){
+      console.log(context.user, "saved book mutation")
+      if (context.user) {
         const updateUser = User.findOneAndUpdate(
           { _id: context.user._id },
           {
@@ -52,30 +52,22 @@ const resolvers = {
         );
         return updateUser;
       }
-      
+
     },
 
-    // saveBook: async (parent, { UserId, book }) => {
-    //   return User.findOneAndUpdate(
-    //     { _id: UserId },
-    //     {
-    //       $addToSet: { books: book },
-    //     },
-    //     {
-    //       new: true,
-    //       runValidators: true,
-    //     }
-    //   );
-    // },
     removeUser: async (parent, { UserId }) => {
       return User.findOneAndDelete({ _id: UserId });
     },
-    deleteBook: async (parent, { UserId, book }) => {
-      return User.findOneAndUpdate(
-        { _id: UserId },
-        { $pull: { savedBooks: book } },
-        { new: true }
-      );
+    deleteBook: async (parent, { bookId }, context) => {
+      if (
+        context.user
+      ) {
+        return User.findOneAndUpdate(
+          { _id: context.user._id},
+          { $pull: { savedBooks: {bookId} } },
+          { new: true }
+        );
+      }
     },
   },
 };

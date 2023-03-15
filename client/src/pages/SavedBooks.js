@@ -18,7 +18,6 @@ import Auth from '../utils/auth';
 const SavedBooks = () => {
 //apply useQuery and useMutation to take in imported mutations
   const { loading, data } = useQuery(QUERY_ME);
-  console.log (data);
 //grab REMOVE_BOOK and store in const removeBook
   const [removeBook] = useMutation(REMOVE_BOOK);
 //grab "me" query
@@ -39,7 +38,7 @@ const SavedBooks = () => {
 
       removeBookId(bookId);
     } catch (err) {
-      console.error(err);
+      console.error(JSON.parse(JSON.stringify(err)));
     }
   };
 
