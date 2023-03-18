@@ -8,7 +8,7 @@ With this project, I was given starter code with a fully functioning Google Book
 
 https://github.com/davidrestivo/DRR-21-Mern
 
-https://dashboard.heroku.com/apps/sheltered-taiga-32497
+https://sheltered-taiga-32497.herokuapp.com/
 
 ## Instructions
 
